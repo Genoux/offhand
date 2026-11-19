@@ -20,12 +20,19 @@ island that appears while you speak.
 ## Install
 
 ```bash
+curl -fsSL https://raw.githubusercontent.com/Genoux/offhand/main/packaging/get.sh | bash
+```
+
+That downloads the latest stable release for Linux x86_64 or Apple Silicon,
+checks it against its published checksum, and runs the release's own
+`packaging/install.sh`. Nothing is compiled.
+
+To build from source instead:
+
+```bash
 git clone https://github.com/Genoux/offhand
 cd offhand && ./packaging/install.sh
 ```
-
-Or download a release tarball, unpack it, and run the same `packaging/install.sh`
-from inside — it uses the binaries it finds there instead of building them.
 
 That builds both binaries into `~/.local/bin` and installs the systemd user unit
 and the desktop entry. Nothing is written outside your home directory, and
@@ -47,8 +54,9 @@ Overview says **Connected** once refining has reached OpenRouter, and
 **Disconnected** when one could not — a daemon that is up with a dead network or
 a rejected key still transcribes, but a cleanup level above `none` will not run.
 
-Updating is the same script — `git pull && ./packaging/install.sh` — which
-restarts the daemon onto the new build if it was already running.
+Updating is the **About** page in the window, or the same command again —
+`git pull && ./packaging/install.sh` for a source install. Either restarts the
+daemon onto the new build if it was already running.
 
 There are two release channels. **Stable** is for everyday use. **Experimental**
 lets you try upcoming changes before they reach stable and may be less reliable.
@@ -57,7 +65,8 @@ to stable. Offhand downloads and verifies the selected release and restarts to a
 it. Both builds, your models, settings and history stay on disk. Updates follow
 the selected channel. A release installer refuses to install under the wrong channel.
 
-Removing it is `./packaging/uninstall.sh`. That leaves your config and history
+Removing it is `~/.local/share/offhand/packaging/uninstall.sh` after the one-line
+install, or `./packaging/uninstall.sh` from a checkout. That leaves your config and history
 alone, and prints how to delete those if you want them gone.
 
 ## Daily use
