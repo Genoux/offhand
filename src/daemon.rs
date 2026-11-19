@@ -216,6 +216,7 @@ pub fn run(
                     );
                     eprintln!("{err}");
                 }
+                engine.release_weights();
                 drop(engine);
                 // The island is showing the sweep until the text lands, error
                 // or not - a failed transcription must not leave it spinning.
