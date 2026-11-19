@@ -19,7 +19,8 @@ cargo clippy --manifest-path crates/console/Cargo.toml --all-targets -- -D warni
 # The desktop entry is product surface and nothing else compiles it.
 desktop-file-validate packaging/offhand-console.desktop
 python3 tests/packaging_channels.py
-for script in packaging/install.sh packaging/uninstall.sh packaging/macos/install.sh \
+python3 tests/packaging_get.py
+for script in packaging/get.sh packaging/install.sh packaging/uninstall.sh packaging/macos/install.sh \
   packaging/macos/uninstall.sh packaging/macos/bundle.sh; do
   bash -n "$script"
 done
