@@ -4,7 +4,7 @@ Description=Offhand system tray
 [Service]
 Type=simple
 ExecStart=%h/.local/bin/offhand tray
-Restart=on-failure
+Restart=always
 RestartSec=2
 
 [Install]
