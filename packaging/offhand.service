@@ -11,7 +11,10 @@ Type=simple
 # reads at startup and which works just as well absent. Flags here would win
 # over that file and quietly make it look ignored.
 ExecStart=%h/.local/bin/offhand daemon
-Restart=on-failure
+# Not on-failure: earlyoom ends the daemon with SIGTERM, which systemd counts
+# as a clean exit, so on-failure left dictation off until the console was
+# opened. `systemctl stop` (the console's Stop, the tray's Quit) still holds.
+Restart=always
 RestartSec=2
 
 [Install]
