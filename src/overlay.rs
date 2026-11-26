@@ -83,28 +83,13 @@ const SETTLED: f32 = 0.02;
 /// frames it is drawn on, and 60Hz visibly steps on a display this fast.
 const FRAME: Duration = Duration::from_millis(7);
 
-/// Muted black over the blur, rather than the blur alone.
-///
-/// The blur is what makes the island visible, not this: blurred wallpaper already
-/// looks nothing like sharp wallpaper, so the shape reads without being painted
-/// in. A pale veil was tried and came out a solid light pill with the wallpaper
-/// lost behind it - opaque frosted plastic rather than glass. Darkening slightly
-/// keeps the bars legible over a bright photo while leaving its colour showing.
-///
-/// Over a desktop as dark as this one the fill is close to invisible on its own,
-/// which is fine - there the rim and the blur draw the shape.
-const ISLAND: (f32, f32, f32) = (0.04, 0.045, 0.055);
+const ISLAND: (f32, f32, f32) = (0.03, 0.03, 0.03);
 
-/// Barely there, and deliberately flat. The island is meant to show the desktop
-/// behind it out of focus - whatever is back there, wallpaper or window - so the
-/// fill is a veil over the compositor's blur rather than a surface of its own. A
-/// gradient here competes with what it is supposed to be revealing.
-///
-/// Clear of the `ignore_alpha = 0.1` in Hyprland's layer rule, below which it
-/// stops blurring behind the surface and the island becomes a hole in the screen.
-/// Hyprland also needs the rule itself to frost anything: without
-/// `layerrule = blur, offhand` this is a faint tint over a sharp desktop.
-const ISLAND_ALPHA: f32 = 0.55;
+/// Opaque. The island used to be a 0.55 veil over a compositor blur, but the blur
+/// depends on a layer rule only Hyprland has and only if the user wrote one (the
+/// owner's matched `offhand-overlay`, not the `offhand` namespace, so it never
+/// applied), and a Mac has none: what shipped was sharp desktop showing through.
+const ISLAND_ALPHA: f32 = 1.0;
 
 /// A hairline ring around the edge, one pixel wide and one flat alpha.
 ///
@@ -119,13 +104,6 @@ const EDGE: (f32, f32, f32) = (1.0, 1.0, 1.0);
 const EDGE_ALPHA: f32 = 0.09;
 const BAR: (f32, f32, f32) = (1.0, 1.0, 1.0);
 const BAR_ALPHA: f32 = 0.92;
-/// A dark rim drawn under each bar. The island is glass, so whatever is behind
-/// it can be any brightness - over a white window the white bars disappear
-/// without this. It is invisible against a dark backdrop, which is the point:
-/// it only shows where it is needed.
-const RIM: (f32, f32, f32) = (0.0, 0.0, 0.0);
-const RIM_ALPHA: f32 = 0.42;
-const RIM_WIDTH: f32 = 0.9;
 /// Muted while transcribing, so working reads as quieter than listening rather
 /// than as another voice.
 const BAR_WORKING_ALPHA: f32 = 0.45;
@@ -1383,15 +1361,6 @@ fn render_island(
         let bar = (BAR_MIN + (BAR_MAX - BAR_MIN) * height) * scale;
         let at = (first + pitch * index as f32, centre.1);
         let half = (BAR_WIDTH * scale / 2.0, bar / 2.0);
-        let rim = RIM_WIDTH * scale;
-
-        canvas.rounded_rect(
-            at,
-            (half.0 + rim, half.1 + rim),
-            half.0 + rim,
-            RIM,
-            RIM_ALPHA * alpha,
-        );
         canvas.rounded_rect(at, half, half.0, BAR, alpha);
     }
 
@@ -2036,6 +2005,15 @@ mod tests {
                 cancel[1] > pill[1] && cancel[1] < 100,
                 "cancel is not a translucent fill over the pill: {cancel:?} over {pill:?}"
             );
+        }
+    }
+
+    #[test]
+    fn the_pill_hides_what_is_behind_it() {
+        for scale in [1.0, 2.0] {
+            let canvas = latched_island(scale);
+            let fill = pixel(&canvas, (HANDS_FREE_LEFT + 60.0) * scale, 4.0 * scale);
+            assert_eq!(fill[3], 255, "the pill is see-through: {fill:?}");
         }
     }
 
