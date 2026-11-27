@@ -1,6 +1,6 @@
 # Maintainer: John Barry
 pkgname=offhand
-pkgver=0.4.1
+pkgver=0.8.0
 pkgrel=1
 pkgdesc="Voice dictation daemon with a local speech model and a system tray console"
 arch=('x86_64')
@@ -19,7 +19,7 @@ replaces=('flow')
 conflicts=('flow')
 install=offhand.install
 source=("https://github.com/Genoux/offhand/releases/download/v${pkgver}/offhand-v${pkgver}-${CARCH}-linux.tar.gz")
-sha256sums=('5878a706634b9f99b3b5ba17303ce4e5322cd3415c3b9a50b1be10719675e112')
+sha256sums=('07b4ed368ee94d3e76f08914e17ed94d1a0a7a4d07d98a1171b40b72194e1155')
 
 package() {
 	local srcname="offhand-v${pkgver}-${CARCH}-linux"
